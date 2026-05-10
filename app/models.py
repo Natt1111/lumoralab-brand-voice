@@ -26,26 +26,28 @@ class IngestResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Generation models (Phase 2)
+# Retrieval models
 # ---------------------------------------------------------------------------
 
-ContentType = Literal["blog_post", "social_post", "email", "case_study", "ad_copy"]
+class SearchResult(BaseModel):
+    chunk: DocumentChunk
+    similarity_score: float
+
+
+# ---------------------------------------------------------------------------
+# Generation models
+# ---------------------------------------------------------------------------
+
+ContentType = Literal["linkedin_post", "blog_post", "email", "social_media", "general"]
 
 
 class GenerateRequest(BaseModel):
     prompt: str = Field(..., description="What you want the content to be about")
-    content_type: ContentType = Field(default="blog_post")
-    tone: str = Field(default="professional yet approachable")
-
-
-class RetrievedChunk(BaseModel):
-    chunk_id: str
-    source_file: str
-    content: str
-    distance: float
+    content_type: ContentType = Field(default="linkedin_post")
+    top_k: int = Field(default=5, ge=1, le=20, description="Number of context chunks to retrieve")
 
 
 class GenerateResponse(BaseModel):
-    content_type: ContentType
     generated_content: str
-    retrieved_chunks: list[RetrievedChunk]
+    retrieved_sources: list[str]
+    num_chunks_used: int
