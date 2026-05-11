@@ -47,7 +47,14 @@ class GenerateRequest(BaseModel):
     top_k: int = Field(default=5, ge=1, le=20, description="Number of context chunks to retrieve")
 
 
+class ChunkPreview(BaseModel):
+    source: str
+    text_preview: str
+    similarity_score: float
+
+
 class GenerateResponse(BaseModel):
     generated_content: str
     retrieved_sources: list[str]
     num_chunks_used: int
+    chunks: list[ChunkPreview] = Field(default_factory=list)

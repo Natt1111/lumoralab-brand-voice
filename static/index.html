@@ -4,25 +4,644 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LumoraLab Brand Voice Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#0A0A0A',
+            card: '#141414',
+            inset: '#1A1A1A',
+            rim: '#2A2A2A',
+            hi: '#FAFAFA',
+            mid: '#888888',
+            lo: '#666666',
+            green: '#10B981',
+            red: '#E24B4A',
+            blue: '#378ADD',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #0A0A0A;
+      color: #FAFAFA;
+      font-family: 'Inter', ui-sans-serif, system-ui;
       min-height: 100vh;
-      margin: 0;
-      background: #0f0f0f;
-      color: #f0f0f0;
+      -webkit-font-smoothing: antialiased;
     }
-    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-    p  { color: #888; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0A0A0A; }
+    ::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 4px; }
+
+    /* ── Animations ──────────────────────────────────────── */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
+      50%       { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pulse-dot  { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .slide-up   { animation: slide-up  0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+    .fade-in    { animation: fade-in   0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+    .cursor::after {
+      content: '▋';
+      color: #555;
+      animation: blink 1s step-start infinite;
+    }
+
+    /* ── Form controls ───────────────────────────────────── */
+    textarea, input[type="text"], select {
+      display: block;
+      width: 100%;
+      background: #141414;
+      border: 1px solid #2A2A2A;
+      color: #FAFAFA;
+      border-radius: 7px;
+      padding: 11px 13px;
+      font-family: 'Inter', ui-sans-serif, system-ui;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.55;
+      transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      appearance: none;
+      -webkit-appearance: none;
+      resize: vertical;
+    }
+    textarea:focus, input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #FAFAFA;
+    }
+    textarea::placeholder, input[type="text"]::placeholder { color: #555; }
+    select option { background: #141414; color: #FAFAFA; }
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      background: #FAFAFA;
+      color: #0A0A0A;
+      border: none;
+      border-radius: 7px;
+      padding: 13px 20px;
+      font-family: 'Inter', ui-sans-serif, system-ui;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity  0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+    .btn-primary:hover:not(:disabled) { transform: scale(1.02); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #888;
+      font-family: 'Inter', ui-sans-serif, system-ui;
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      padding: 6px 0;
+      margin-right: 28px;
+      transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-btn.active { color: #FAFAFA; border-bottom-color: #FAFAFA; }
+
+    .btn-copy {
+      background: transparent;
+      border: 1px solid #2A2A2A;
+      color: #666;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .btn-copy:hover { border-color: #FAFAFA; color: #FAFAFA; }
+    .btn-copy.copied { border-color: #10B981; color: #10B981; }
+
+    /* ── Surfaces ────────────────────────────────────────── */
+    .card  {
+      background: #141414;
+      border: 1px solid #2A2A2A;
+      border-radius: 9px;
+      padding: 18px;
+    }
+    .sep { border: none; border-top: 1px solid #2A2A2A; }
+
+    /* ── Labels ──────────────────────────────────────────── */
+    .field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+    }
+
+    /* ── Badges & tags ───────────────────────────────────── */
+    .content-tag {
+      font-size: 10px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      letter-spacing: 0.06em;
+      color: #378ADD;
+      background: rgba(55, 138, 221, 0.09);
+      border: 1px solid rgba(55, 138, 221, 0.22);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .sim-badge {
+      font-size: 10px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* ── Misc ────────────────────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(10,10,10,0.25);
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+      position: relative;
+      top: -1px;
+    }
+    .error-box {
+      background: rgba(226, 75, 74, 0.07);
+      border: 1px solid rgba(226, 75, 74, 0.28);
+      border-radius: 7px;
+      padding: 12px 15px;
+      color: #E24B4A;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .source-card {
+      background: #1A1A1A;
+      border: 1px solid #2A2A2A;
+      border-radius: 7px;
+      padding: 12px;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      #app { padding: 32px 16px 64px; }
+    }
   </style>
 </head>
 <body>
-  <h1>LumoraLab Brand Voice Generator</h1>
-  <p>UI coming soon — use the API at <code>/api/ingest</code> and <code>/api/generate</code></p>
-  <!-- TODO: Build full UI with ingest form and generation interface -->
+  <div id="app" style="max-width:720px; margin:0 auto; padding:52px 24px 80px;">
+
+    <!-- ── HEADER ──────────────────────────────────────────── -->
+    <header style="margin-bottom:36px;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:18px;">
+        <div class="pulse-dot" style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0;"></div>
+        <span style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:10px;letter-spacing:0.13em;color:#666;">
+          RAG ACTIVE · CLAUDE SONNET 4.5 · VOYAGE AI
+        </span>
+      </div>
+      <h1 style="font-size:24px;font-weight:500;color:#FAFAFA;letter-spacing:-0.02em;margin-bottom:6px;">
+        LumoraLab Brand Voice
+      </h1>
+      <p style="font-size:14px;color:#888;font-weight:400;">
+        AI content generator trained on your brand
+      </p>
+    </header>
+
+    <hr class="sep" style="margin-bottom:26px;" />
+
+    <!-- ── TABS ────────────────────────────────────────────── -->
+    <div style="margin-bottom:30px;">
+      <button id="tab-ingest"   class="tab-btn" onclick="switchTab('ingest')">📤 Ingest Content</button>
+      <button id="tab-generate" class="tab-btn active" onclick="switchTab('generate')">✨ Generate Content</button>
+    </div>
+
+    <!-- ── INGEST PANE ─────────────────────────────────────── -->
+    <div id="pane-ingest" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <label class="field-label" for="ingest-text">Paste your content</label>
+          <textarea id="ingest-text" rows="10"
+            placeholder="Paste a blog post, about page, case study, or any brand content you want to teach the AI..."></textarea>
+        </div>
+        <div>
+          <label class="field-label" for="ingest-source">Source name</label>
+          <input type="text" id="ingest-source" placeholder="blog_post_dental_ai" />
+        </div>
+        <button id="ingest-btn" class="btn-primary" onclick="handleIngest()">
+          Ingest into Brand Memory
+        </button>
+        <div id="ingest-error"   style="display:none;"></div>
+        <div id="ingest-success" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ── GENERATE PANE ───────────────────────────────────── -->
+    <div id="pane-generate">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <label class="field-label" for="content-type">Content type</label>
+          <div style="position:relative;">
+            <select id="content-type">
+              <option value="linkedin_post">LinkedIn Post</option>
+              <option value="blog_post">Blog Post</option>
+              <option value="email">Email</option>
+              <option value="social_media">Social Media</option>
+              <option value="general">General</option>
+            </select>
+            <!-- Custom chevron -->
+            <svg style="position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;"
+                 width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4.5l4 3.5 4-3.5" stroke="#666" stroke-width="1.4"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="generate-prompt">What should I write?</label>
+          <textarea id="generate-prompt" rows="5"
+            placeholder="Write a LinkedIn post about how AI can help small dental practices reduce no-shows"></textarea>
+        </div>
+        <button id="generate-btn" class="btn-primary" onclick="handleGenerate()">
+          Generate with AI →
+        </button>
+        <div id="generate-error" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ── RESULTS ─────────────────────────────────────────── -->
+    <div id="results" style="display:none;margin-top:36px;">
+      <hr class="sep" style="margin-bottom:30px;" />
+
+      <!-- Reasoning trace -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="section-label" style="margin-bottom:12px;">Reasoning Trace</div>
+        <div id="trace"
+             style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;
+                    color:#666;line-height:1.9;min-height:20px;"></div>
+      </div>
+
+      <!-- Sources -->
+      <div id="sources-panel" class="card" style="margin-bottom:14px;display:none;">
+        <div class="section-label" style="margin-bottom:12px;">Sources Used</div>
+        <div id="sources-grid"
+             style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;"></div>
+      </div>
+
+      <!-- Generated content -->
+      <div id="content-panel" class="card" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+            <span class="section-label">Generated Content</span>
+            <span id="content-type-tag" class="content-tag"></span>
+          </div>
+          <button id="copy-btn" class="btn-copy" onclick="copyContent()">COPY</button>
+        </div>
+        <hr class="sep" style="margin-bottom:18px;" />
+        <div id="generated-text"
+             style="font-size:14px;line-height:1.75;color:#FAFAFA;
+                    white-space:pre-wrap;overflow-wrap:break-word;"></div>
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+
+  <script>
+    // ─── State ─────────────────────────────────────────────────────────────────
+    let _fullText = '';   // stashed before streaming starts (for copy)
+
+    // ─── Utilities ─────────────────────────────────────────────────────────────
+    const delay = ms => new Promise(r => setTimeout(r, ms));
+
+    async function typeInto(el, text, speed = 15) {
+      for (const ch of text) {
+        el.textContent += ch;
+        await delay(speed);
+      }
+    }
+
+    async function streamInto(containerEl, text, speed = 18) {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      containerEl.appendChild(cursor);
+      for (const ch of text) {
+        cursor.insertAdjacentText('beforebegin', ch);
+        await delay(speed);
+      }
+      cursor.remove();
+    }
+
+    async function traceLine(traceEl, text, speed = 15) {
+      const row = document.createElement('div');
+      traceEl.appendChild(row);
+      await typeInto(row, text, speed);
+      await delay(150);
+    }
+
+    function escHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.style.display = 'block';
+      el.innerHTML = `<div class="error-box">${escHtml(msg)}</div>`;
+    }
+    function clearError(id) {
+      const el = document.getElementById(id);
+      el.style.display = 'none';
+      el.innerHTML = '';
+    }
+
+    function setBtn(id, loading, loadingLabel, idleLabel) {
+      const btn = document.getElementById(id);
+      btn.disabled = loading;
+      btn.innerHTML = loading
+        ? `<span class="spinner"></span>${loadingLabel}`
+        : idleLabel;
+    }
+
+    // ─── Tab switching ──────────────────────────────────────────────────────────
+    function switchTab(tab) {
+      ['ingest', 'generate'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+        document.getElementById(`pane-${t}`).style.display = t === tab ? 'block' : 'none';
+      });
+      if (tab === 'ingest') document.getElementById('results').style.display = 'none';
+    }
+
+    // ─── Ingest ─────────────────────────────────────────────────────────────────
+    async function handleIngest() {
+      const text   = document.getElementById('ingest-text').value.trim();
+      const source = document.getElementById('ingest-source').value.trim();
+
+      clearError('ingest-error');
+      document.getElementById('ingest-success').style.display = 'none';
+
+      if (!text)   return showError('ingest-error', 'Please paste some content to ingest.');
+      if (!source) return showError('ingest-error', 'Please enter a source name (e.g. about_page).');
+
+      setBtn('ingest-btn', true, 'Ingesting…', '');
+
+      try {
+        const res = await fetch('/api/ingest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, source }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+
+        // Clear form
+        document.getElementById('ingest-text').value   = '';
+        document.getElementById('ingest-source').value = '';
+
+        // Show success card
+        const el = document.getElementById('ingest-success');
+        el.style.display = 'block';
+        el.innerHTML = `
+          <div class="card slide-up"
+               style="border-color:rgba(16,185,129,0.28);background:rgba(16,185,129,0.04);">
+            <div style="display:flex;align-items:flex-start;gap:13px;">
+              <div style="width:32px;height:32px;border-radius:50%;
+                          background:rgba(16,185,129,0.12);
+                          border:1px solid rgba(16,185,129,0.3);
+                          display:flex;align-items:center;justify-content:center;
+                          flex-shrink:0;margin-top:1px;">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                  <path d="M2.5 7.5l3.5 3.5 6.5-7" stroke="#10B981" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:#FAFAFA;margin-bottom:4px;">
+                  Ingested successfully
+                </div>
+                <div style="font-family:ui-monospace,monospace;font-size:11px;color:#888;margin-bottom:4px;">
+                  ${escHtml(data.source)}
+                </div>
+                <div style="font-size:12px;color:#10B981;">
+                  ${data.chunks_created} chunk${data.chunks_created !== 1 ? 's' : ''} added to brand memory
+                </div>
+              </div>
+            </div>
+          </div>`;
+      } catch (err) {
+        showError('ingest-error', `Ingestion failed: ${err.message}`);
+      } finally {
+        setBtn('ingest-btn', false, '', 'Ingest into Brand Memory');
+      }
+    }
+
+    // ─── Generate ───────────────────────────────────────────────────────────────
+    async function handleGenerate() {
+      const prompt      = document.getElementById('generate-prompt').value.trim();
+      const contentType = document.getElementById('content-type').value;
+
+      clearError('generate-error');
+      if (!prompt) return showError('generate-error', 'Please enter a prompt.');
+
+      setBtn('generate-btn', true, 'Generating…', '');
+
+      // ── Show & reset results section ──
+      const resultsEl = document.getElementById('results');
+      resultsEl.style.display = 'block';
+      document.getElementById('trace').innerHTML           = '';
+      document.getElementById('sources-panel').style.display = 'none';
+      document.getElementById('sources-grid').innerHTML    = '';
+      document.getElementById('content-panel').style.display = 'none';
+      document.getElementById('generated-text').innerHTML  = '';
+
+      await delay(80);
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const traceEl = document.getElementById('trace');
+
+      // ── Run first 2 trace lines in parallel with API call ──
+      const initialTrace = (async () => {
+        await traceLine(traceEl, '→ Embedding your request…');
+        await traceLine(traceEl, '→ Searching brand memory…');
+      })();
+
+      let data, apiErr;
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, content_type: contentType, top_k: 5 }),
+        });
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.detail || `HTTP ${res.status}`);
+        }
+        data = await res.json();
+      } catch (err) {
+        apiErr = err;
+      }
+
+      // Wait for the initial trace to finish before continuing
+      await initialTrace;
+
+      setBtn('generate-btn', false, '', 'Generate with AI →');
+
+      if (apiErr) {
+        showError('generate-error', `Generation failed: ${apiErr.message}`);
+        return;
+      }
+
+      // ── Remaining trace lines ──
+      await traceLine(traceEl, `→ Found ${data.num_chunks_used} relevant chunk${data.num_chunks_used !== 1 ? 's' : ''}`);
+      await traceLine(traceEl, '→ Analyzing brand voice patterns…');
+      await traceLine(traceEl, '→ Generating in LumoraLab voice…');
+
+      await delay(180);
+
+      // ── Source cards ──
+      await showSourceCards(data.chunks || []);
+
+      // ── Generated content ──
+      await showGeneratedContent(data, contentType);
+    }
+
+    async function showSourceCards(chunks) {
+      if (!chunks.length) return;
+
+      const panel = document.getElementById('sources-panel');
+      const grid  = document.getElementById('sources-grid');
+      panel.style.display = 'block';
+      panel.style.opacity = '0';
+      panel.style.transition = 'opacity 0.3s cubic-bezier(0.4,0,0.2,1)';
+      await delay(20);
+      panel.style.opacity = '1';
+
+      for (let i = 0; i < chunks.length; i++) {
+        const c    = chunks[i];
+        const card = document.createElement('div');
+        card.className = 'source-card';
+
+        const preview = c.text_preview
+          ? (c.text_preview.length > 80 ? c.text_preview.slice(0, 80) + '…' : c.text_preview)
+          : '';
+        const score = (typeof c.similarity_score === 'number')
+          ? c.similarity_score.toFixed(2) : '—';
+
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;
+                      align-items:flex-start;gap:8px;margin-bottom:7px;">
+            <span style="font-family:ui-monospace,monospace;font-size:11px;
+                         color:#FAFAFA;word-break:break-all;line-height:1.35;">
+              ${escHtml(c.source)}
+            </span>
+            <span class="sim-badge">${score}</span>
+          </div>
+          <p style="font-size:11px;color:#555;line-height:1.55;font-style:italic;margin:0;">
+            &ldquo;${escHtml(preview)}&rdquo;
+          </p>`;
+
+        grid.appendChild(card);
+        await delay(40);
+        card.style.opacity = '1';
+        await delay(160);
+      }
+    }
+
+    async function showGeneratedContent(data, contentType) {
+      const panel   = document.getElementById('content-panel');
+      const textEl  = document.getElementById('generated-text');
+      const typeTag = document.getElementById('content-type-tag');
+
+      typeTag.textContent = contentType.replace(/_/g, ' ');
+      _fullText = data.generated_content;
+
+      panel.style.display = 'block';
+      panel.style.opacity = '0';
+      panel.style.transition = 'opacity 0.35s cubic-bezier(0.4,0,0.2,1)';
+      await delay(20);
+      panel.style.opacity = '1';
+
+      textEl.innerHTML = '';
+      await streamInto(textEl, data.generated_content, 18);
+    }
+
+    // ─── Copy ───────────────────────────────────────────────────────────────────
+    async function copyContent() {
+      if (!_fullText) return;
+      const btn = document.getElementById('copy-btn');
+      try {
+        await navigator.clipboard.writeText(_fullText);
+        btn.textContent = 'COPIED!';
+        btn.classList.add('copied');
+        await delay(1500);
+      } catch {
+        btn.textContent = 'FAILED';
+      } finally {
+        await delay(200);
+        btn.textContent = 'COPY';
+        btn.classList.remove('copied');
+      }
+    }
+
+    // ─── Init ───────────────────────────────────────────────────────────────────
+    switchTab('generate');
+  </script>
 </body>
 </html>

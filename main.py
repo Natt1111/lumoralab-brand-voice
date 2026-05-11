@@ -38,9 +38,11 @@ app.add_middleware(
 app.include_router(ingest_router, prefix="/api")
 app.include_router(generate_router, prefix="/api")
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
-
 
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "collection": settings.collection_name}
+
+
+# Mount static files LAST — the catch-all "/" would swallow any routes defined after it
+app.mount("/", StaticFiles(directory="static", html=True), name="static")

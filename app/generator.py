@@ -1,7 +1,7 @@
 import anthropic
 
 from app.config import settings
-from app.models import GenerateRequest, GenerateResponse, SearchResult
+from app.models import ChunkPreview, GenerateRequest, GenerateResponse, SearchResult
 from app.retrieval import search_similar
 
 _client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
@@ -107,8 +107,18 @@ def generate_content(request: GenerateRequest) -> GenerateResponse:
             seen.add(r.chunk.source)
             sources.append(r.chunk.source)
 
+    chunk_previews = [
+        ChunkPreview(
+            source=r.chunk.source,
+            text_preview=r.chunk.text[:80].strip(),
+            similarity_score=r.similarity_score,
+        )
+        for r in results
+    ]
+
     return GenerateResponse(
         generated_content=generated_text,
         retrieved_sources=sources,
         num_chunks_used=len(results),
+        chunks=chunk_previews,
     )
