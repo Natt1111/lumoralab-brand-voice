@@ -33,5 +33,10 @@ env/
 .DS_Store
 Thumbs.db
 
+# Evaluation artefacts
+.deepeval/
+.pytest_cache/
+evaluation/reports/
+
 # Logs
 *.log

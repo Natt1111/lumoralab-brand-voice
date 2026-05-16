@@ -8,3 +8,5 @@ python-multipart>=0.0.12
 pydantic>=2.9.0
 pypdf>=5.0.0
 markdown>=3.7
+pytest>=8.0.0
+deepeval>=2.0.0

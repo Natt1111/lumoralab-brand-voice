@@ -1,0 +1,72 @@
+[
+  {
+    "id": "tc_001",
+    "query": "Write a LinkedIn post about how AI helps small dental practices reduce patient no-shows",
+    "content_type": "linkedin_post",
+    "expected_themes": ["dental", "no-show", "appointment", "AI"],
+    "expected_voice_traits": ["story-driven", "empathetic", "concrete"]
+  },
+  {
+    "id": "tc_002",
+    "query": "Write a blog post about the hidden cost of manual scheduling for restaurant owners",
+    "content_type": "blog_post",
+    "expected_themes": ["restaurant", "scheduling", "time", "cost"],
+    "expected_voice_traits": ["practical", "empathetic", "specific"]
+  },
+  {
+    "id": "tc_003",
+    "query": "Write an email to a small business owner about automating their invoice follow-ups",
+    "content_type": "email",
+    "expected_themes": ["invoice", "automation", "follow-up", "small business"],
+    "expected_voice_traits": ["direct", "helpful", "concise"]
+  },
+  {
+    "id": "tc_004",
+    "query": "Write a social media post about how a yoga studio saved 10 hours per week with AI",
+    "content_type": "social_media",
+    "expected_themes": ["yoga", "time", "AI", "automation"],
+    "expected_voice_traits": ["casual", "inspiring", "specific"]
+  },
+  {
+    "id": "tc_005",
+    "query": "Write a LinkedIn post about why small businesses deserve enterprise-grade AI tools",
+    "content_type": "linkedin_post",
+    "expected_themes": ["small business", "enterprise", "AI", "tools"],
+    "expected_voice_traits": ["empathetic", "mission-driven", "confident"]
+  },
+  {
+    "id": "tc_006",
+    "query": "Write a blog post about how a bakery owner uses AI to handle customer communication",
+    "content_type": "blog_post",
+    "expected_themes": ["bakery", "customer", "communication", "automation"],
+    "expected_voice_traits": ["story-driven", "concrete", "relatable"]
+  },
+  {
+    "id": "tc_007",
+    "query": "Write a LinkedIn post about the measurable ROI of AI automation for service businesses",
+    "content_type": "linkedin_post",
+    "expected_themes": ["ROI", "automation", "service", "business", "time"],
+    "expected_voice_traits": ["data-driven", "practical", "confident"]
+  },
+  {
+    "id": "tc_008",
+    "query": "Write an email introducing AI workflow automation to a freelance designer buried in admin work",
+    "content_type": "email",
+    "expected_themes": ["freelance", "admin", "automation", "time"],
+    "expected_voice_traits": ["empathetic", "direct", "solution-focused"]
+  },
+  {
+    "id": "tc_009",
+    "query": "Write a general piece about what makes AI adoption different for small businesses vs large enterprises",
+    "content_type": "general",
+    "expected_themes": ["AI", "small business", "enterprise", "adoption"],
+    "expected_voice_traits": ["analytical", "balanced", "insightful"]
+  },
+  {
+    "id": "tc_010",
+    "query": "Write a social media post about the moment a small business owner realized AI could give them their evenings back",
+    "content_type": "social_media",
+    "expected_themes": ["time", "evening", "AI", "small business", "work-life"],
+    "expected_voice_traits": ["story-driven", "relatable", "emotionally resonant"]
+  }
+]
