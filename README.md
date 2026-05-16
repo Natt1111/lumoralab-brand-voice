@@ -39,6 +39,16 @@ Tests run in **61 seconds**. Full eval report generated as HTML.
 
 ## 🏗️ Architecture
 
+```
+Past brand content → chunk → embed (Voyage AI) → ChromaDB
+↓
+User query → embed → semantic search → top-k chunks
+↓
+Claude + retrieved context → generated content
+↓
+Evaluation harness → voice/retrieval/faithfulness scores
+```
+
 ---
 
 ## 🎯 Key engineering decisions
@@ -97,6 +107,38 @@ Generates HTML report at `evaluation/reports/`.
 ---
 
 ## 📁 Project structure
+
+```
+lumoralab-brand-voice/
+├── main.py                        # FastAPI app, CORS, lifespan startup validation
+├── requirements.txt
+├── .env.example                   # API key template (never commit .env)
+├── test_ingestion.py              # Standalone Phase 1 smoke test: chunk → embed → store
+├── test_generation.py             # Standalone Phase 2 smoke test: retrieve → generate
+│
+├── app/
+│   ├── config.py                  # Loads .env, validates required keys on startup
+│   ├── models.py                  # Pydantic models: ingest, retrieval, generation
+│   ├── ingestion.py               # chunk_text → embed_chunks → store in ChromaDB
+│   ├── retrieval.py               # embed_query → semantic search → SearchResult list
+│   ├── generator.py               # retrieve → build prompt → call Claude → response
+│   └── routes/
+│       ├── ingest.py              # POST /api/ingest
+│       └── generate.py            # POST /api/generate
+│
+├── evaluation/
+│   ├── test_dataset.json          # 10 test cases with expected themes + voice traits
+│   ├── metrics.py                 # VoiceConsistency, RetrievalPrecision, Faithfulness
+│   ├── runner.py                  # Runs dataset through RAG, returns EvalResult list
+│   ├── report.py                  # Generates Markdown + HTML evaluation reports
+│   └── test_rag_eval.py           # pytest suite (11 tests, session-scoped fixtures)
+│
+├── static/
+│   └── index.html                 # Single-file dark-themed UI (Tailwind + vanilla JS)
+│
+└── data/
+    └── chroma/                    # ChromaDB persistent store (git-ignored)
+```
 
 ---
 
